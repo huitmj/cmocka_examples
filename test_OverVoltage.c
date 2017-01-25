@@ -1,21 +1,24 @@
-#include <stdlib.h>
+// Application Under Test
+#include <stdbool.h>
+#include "Adc.h"
 
+bool isOverVoltage(int limit) { 
+  return getAdcValue(1) > limit ? true : false; 
+}
+
+// Mock Adc Behaviour
+#include <stdlib.h>
 #include <stdbool.h>
 #include <stdarg.h>
 #include <setjmp.h>
 #include <cmocka.h>
-
-#include "Adc.h"
 
 int __wrap_getAdcValue(int address) { 
   check_expected(address);
   return mock_type(int)<< 2; 
 }
 
-bool isOverVoltage(int limit) { 
-  return getAdcValue(1) > limit ? true : false; 
-}
-
+// Test frameworks
 static void test_given10_whenAdcIs2_expectFalse(void **state) {
   expect_value(__wrap_getAdcValue,address,1);
   will_return(__wrap_getAdcValue, 2);
